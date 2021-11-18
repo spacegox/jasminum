@@ -215,7 +215,7 @@ Zotero.Jasminum = new function () {
                 // 没有查询结果
                 this.Utils.showPopup(
                     "No results found!",
-                    `作者：${fileData.author},\n   篇名：${fileData.keyword},\n   请检查设置中的文件名模板是否与实际实际情况相符`,
+                    `作者：${fileData.author},\n   篇名：${fileData.keyword},\n   未查询到结果`,
                     true)
             }
         }
@@ -359,10 +359,10 @@ Zotero.Jasminum = new function () {
      */
     this.updateCiteCSSCI = async function (items) {
         var item = items.shift();
-        if (Zotero.ItemTypes.getName(item.itemTypeID) == "patent") {
+        if (["patent", "webpage"].includes(Zotero.ItemTypes.getName(item.itemTypeID))) {
             this.Utils.showPopup(
                 "期刊、引用抓取完毕",
-                "专利条目不需要抓取"
+                `${Zotero.ItemTypes.getName(item.itemTypeID)}类型条目不需要抓取`
             )
         } else {
             let url = item.getField("url");

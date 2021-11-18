@@ -36,7 +36,16 @@
                                 <separator/>
                                 <vbox flex="1">
                                     <description>&jasminum.namepatent.desc;</description>
-                                    <textbox id="jasminum-namepatent" preference="pref-jasminum-namepatent"/>
+                                    <!-- <textbox id="jasminum-namepatent" preference="pref-jasminum-namepatent"/> -->
+                                    <hbox>
+                                        <menulist flex="1" editable="true" id="jasminum-namepatent" preference="pref-jasminum-namepatent">
+                                            <menupopup>
+                                                <menuitem label="{%t}_{%g}" selected="true" tooltiptext="&jasminum.namepatent.desc.tg;"/>
+                                                <menuitem label="{%t}" tooltiptext="&jasminum.namepatent.desc.t;"/>
+                                            </menupopup>
+                                        </menulist>
+                                        <description>&jasminum.namepatent.desc.info;</description>
+                                    </hbox>
                                 </vbox>
                             </groupbox>
                             <groupbox>
@@ -52,6 +61,7 @@
                         </vbox>
                     </tabpanel>
                     <tabpanel id="zotero-prefpane-translators-tab" orient="vertical">
+                        <description>点击下方刷新按钮更新数据，在刷新窗口中点击对应翻译器的Update按键进行下载</description>
                         <listbox id="translators-listbox" flex="1">
 		                <listhead>
 		                	<listheader label="Translators"/>

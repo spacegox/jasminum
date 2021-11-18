@@ -359,40 +359,47 @@ Zotero.Jasminum = new function () {
      */
     this.updateCiteCSSCI = async function (items) {
         var item = items.shift();
-        let url = item.getField("url");
-        let resp = await Zotero.HTTP.request("GET", url);
-        let html = this.Utils.string2HTML(resp.responseText);
-        let dateString = new Date().toLocaleDateString().replace(/\//g, '-');
-        let cite = this.Scrape.getCitationFromPage(html);
-        let citeString = cite + " citation(CNKI)[" + dateString + "]";
-        let cssci = this.Scrape.getCSSCI(html);
-        let cssciString = "<" + cssci + ">";
-        var extraData = item.getField("extra");
+        if (Zotero.ItemTypes.getName(item.itemTypeID) == "patent") {
+            this.Utils.showPopup(
+                "期刊、引用抓取完毕",
+                "专利条目不需要抓取"
+            )
+        } else {
+            let url = item.getField("url");
+            let resp = await Zotero.HTTP.request("GET", url);
+            let html = this.Utils.string2HTML(resp.responseText);
+            let dateString = new Date().toLocaleDateString().replace(/\//g, '-');
+            let cite = this.Scrape.getCitationFromPage(html);
+            let citeString = cite + " citation(CNKI)[" + dateString + "]";
+            let cssci = this.Scrape.getCSSCI(html);
+            let cssciString = "<" + cssci + ">";
+            var extraData = item.getField("extra");
 
-        if (cite != null && cite > 0) {
-            if (extraData.match(/\d+ citations\s?\(CNKI\)\s?\[\d{4}-\d{1,2}-\d{1,2}\]/)) {
-                extraData = extraData.replace(/\d+ citations\s?\(CNKI\)\s?\[\d{4}-\d{1,2}-\d{1,2}\]/,
-                    citeString);
-            } else {
-                extraData += citeString;
+            if (cite != null && cite > 0) {
+                if (extraData.match(/\d+ citations\s?\(CNKI\)\s?\[\d{4}-\d{1,2}-\d{1,2}\]/)) {
+                    extraData = extraData.replace(/\d+ citations\s?\(CNKI\)\s?\[\d{4}-\d{1,2}-\d{1,2}\]/,
+                        citeString);
+                } else {
+                    extraData += citeString;
+                }
             }
-        }
 
-        if (cssci) {
-            if (extraData.match(/<.*?>/)) {
-                extraData = extraData.replace(/<.*?>/, cssciString);
-            } else {
-                extraData += cssciString;
+            if (cssci) {
+                if (extraData.match(/<.*?>/)) {
+                    extraData = extraData.replace(/<.*?>/, cssciString);
+                } else {
+                    extraData += cssciString;
+                }
             }
+            this.Utils.showPopup(
+                "期刊、引用抓取完毕",
+                `${item.getField('title')}, ${cite}, ${cssci}`
+            )
+            Zotero.debug("** Jasminum cite number: " + cite);
+            Zotero.debug("** Jasminum cite number: " + cssci);
+            item.setField("extra", extraData);
+            await item.saveTx();
         }
-        this.Utils.showPopup(
-            "期刊、引用抓取完毕",
-            `${item.getField('title')}, ${cite}, ${cssci}`
-        )
-        Zotero.debug("** Jasminum cite number: " + cite);
-        Zotero.debug("** Jasminum cite number: " + cssci);
-        item.setField("extra", extraData);
-        await item.saveTx();
 
         if (items.length) {
             this.updateCiteCSSCI(items);

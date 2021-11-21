@@ -31,6 +31,11 @@
                     label="&jasminum.CNKI.updateCiteCSSCI.label;"
                     class="menuitem-iconic jasminum-cssci-icon"
                     oncommand="Zotero.Jasminum.updateCiteCSSCIItems();"/>
+                <menuitem
+                    id="jasminum-itemmenu-downloadAttachment"
+                    label="附件下载"
+                    class="menuitem-iconic jasminum-cssci-icon"
+                    oncommand="Zotero.Jasminum.downloadAttachmentItems();"/>
 			</menupopup>
 		</menu>
         <menu id="jasminum-popup-menu2"

@@ -411,4 +411,46 @@ Zotero.Jasminum = new function () {
         this.updateCiteCSSCI(items);
     };
 
+
+    /**
+     * Download attachment PDF/CAJ from CNKI.
+     * Only one item can be selected at a time to avoid IP being blocked.
+     * @param {[Zotero.item]}
+     * @return {volid}
+    **/
+    this.downloadAttachment = async function (item, pdf = true) {
+        let host = "https://oversea.cnki.net";
+        let url = item.getField("url");
+        Zotero.debug("** Jasminum origin url link: " + url);
+        let overseaUrl = host + url.slice(url.search(/\/KCMS\//i));
+        Zotero.debug("** Jasminum oversea url link: " + overseaUrl);
+        let resp = await Zotero.HTTP.request("GET", overseaUrl);
+        let html = this.Utils.string2HTML(resp.responseText);
+        let link = html.querySelector("#pdfDown");
+        if (link === null) {
+            this.Utils.showPopup(
+                "未查询到下载链接",
+                `${item.getField('title')} 附件下载失败`
+            );
+            return;
+        }
+        var filelink = host + link.getAttribute("href");
+        // remove cflag=pdf<unknow reason> and attachment type flag
+        filelink = filelink.replace(/&[cd]flag=[a-z]+/g, "");
+        if (pdf) {
+            filelink += "&dflag=pdfdown";
+        } else {
+            filelink += "&dflag=cajdown";
+        }
+        Zotero.debug("** Jasminum download link: " + filelink);
+    };
+
+    this.downloadAttachmentItems = function () {
+        var items = ZoteroPane.getSelectedItems();
+        for (let item of items) {
+            this.downloadAttachment(item);
+        }
+    }
+
+
 };
